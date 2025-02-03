@@ -14,12 +14,12 @@ WidgetsFlutterBinding.ensureInitialized();
 if (kIsWeb){  
   await Firebase.initializeApp(
     options: const FirebaseOptions(
-        apiKey: "AIzaSyAbFODVRKLCFp_7bGl4oUExV_R2T_pVTUE",
-        authDomain: "labproject-4448b.firebaseapp.com",
-        projectId: "labproject-4448b",
-        storageBucket: "labproject-4448b.firebasestorage.app",
-        messagingSenderId: "960082773245",
-        appId: "1:960082773245:web:edd3448283118027ea6a94"));}
+        apiKey: "",
+        authDomain: "",
+        projectId: "",
+        storageBucket: "",
+        messagingSenderId: "",
+        appId: ""));}
         else {
           await Firebase.initializeApp();
         }
