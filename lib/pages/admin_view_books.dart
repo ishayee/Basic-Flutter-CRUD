@@ -2,18 +2,43 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:labproject/pages/admin_add_book.dart';
 import 'package:labproject/pages/admin_edit_book.dart';
+import 'package:labproject/pages/admin_deleted_books.dart'; // New Page for Deleted Books
 
+class AdminViewBooksScreen extends StatefulWidget {
+  @override
+  _AdminViewBooksScreenState createState() => _AdminViewBooksScreenState();
+}
 
-class AdminViewBooksScreen extends StatelessWidget {
+class _AdminViewBooksScreenState extends State<AdminViewBooksScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Book List")),
+      appBar: AppBar(
+        title: Text("Book List"),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.delete, color: Colors.red),
+            tooltip: "View Deleted Books",
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AdminDeletedBooksScreen()),
+              );
+            },
+          ),
+        ],
+      ),
       body: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection('books').snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection('books')
+            .where('isDeleted', isEqualTo: false) // Show only non-deleted books
+            .snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (!snapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
+          if (snapshot.hasError) {
+            return Center(child: Text("Error: ${snapshot.error}"));
+          }
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return Center(child: Text("No books found"));
           }
 
           var books = snapshot.data!.docs;
@@ -22,7 +47,8 @@ class AdminViewBooksScreen extends StatelessWidget {
             padding: EdgeInsets.all(8.0),
             itemCount: books.length,
             itemBuilder: (context, index) {
-              var book = books[index].data() as Map<String, dynamic>;
+              var bookData = books[index].data() as Map<String, dynamic>;
+              String bookId = books[index].id;
 
               return Card(
                 shape: RoundedRectangleBorder(
@@ -32,30 +58,21 @@ class AdminViewBooksScreen extends StatelessWidget {
                 margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
                 child: ListTile(
                   contentPadding: EdgeInsets.all(10),
-                  leading: Icon(
-                    Icons.book,
-                    size: 40,
-                    color: Colors.blueAccent,
-                  ),
                   title: Text(
-                    book['title'] ?? 'No Title',
+                    bookData['title'] ?? 'No Title',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Author: ${book['author'] ?? 'Unknown'}"),
-                      Text("Genre: ${book['genre'] ?? 'N/A'}"),
-                      Text("Year: ${book['year'] ?? 'N/A'}"),
+                      Text("Author: ${bookData['author'] ?? 'Unknown'}"),
+                      Text("Genre: ${bookData['genre'] ?? 'N/A'}"),
+                      Text("Year: ${bookData['year'] ?? 'N/A'}"),
                       SizedBox(height: 5),
                       Text(
-                        book['available'] == true
-                            ? "Available ✅"
-                            : "Not Available ❌",
+                        bookData['available'] == true ? "Available ✅" : "Not Available ❌",
                         style: TextStyle(
-                          color: book['available'] == true
-                              ? Colors.green
-                              : Colors.red,
+                          color: bookData['available'] == true ? Colors.green : Colors.red,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -71,8 +88,8 @@ class AdminViewBooksScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) => AdminEditBookScreen(
-                                bookId: books[index].id, // ✅ Pass Book ID
-                                bookData: book, // ✅ Pass Book Data
+                                bookId: bookId,
+                                bookData: bookData,
                               ),
                             ),
                           );
@@ -81,10 +98,7 @@ class AdminViewBooksScreen extends StatelessWidget {
                       IconButton(
                         icon: Icon(Icons.delete, color: Colors.red),
                         onPressed: () {
-                          FirebaseFirestore.instance
-                              .collection('books')
-                              .doc(books[index].id)
-                              .delete();
+                          _moveToDeletedBooks(bookId);
                         },
                       ),
                     ],
@@ -106,5 +120,12 @@ class AdminViewBooksScreen extends StatelessWidget {
         tooltip: "Add a New Book",
       ),
     );
+  }
+
+  /// **Move book to deleted list (Soft Delete)**
+  void _moveToDeletedBooks(String bookId) async {
+    await FirebaseFirestore.instance.collection('books').doc(bookId).update({
+      'isDeleted': true, // Mark as deleted
+    });
   }
 }
