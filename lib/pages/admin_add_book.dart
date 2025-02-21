@@ -14,6 +14,7 @@ class _AdminAddBookScreenState extends State<AdminAddBookScreen> {
   final TextEditingController yearController = TextEditingController();
   bool available = true;
 
+  /// **Add Book to Firestore**
   void _addBook() async {
     if (titleController.text.isEmpty ||
         authorController.text.isEmpty ||
@@ -21,7 +22,7 @@ class _AdminAddBookScreenState extends State<AdminAddBookScreen> {
         genreController.text.isEmpty ||
         yearController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Please fill in all fields")),
+        const SnackBar(content: Text("Please fill in all fields")),
       );
       return;
     }
@@ -33,12 +34,14 @@ class _AdminAddBookScreenState extends State<AdminAddBookScreen> {
       'genre': genreController.text,
       'year': yearController.text,
       'available': available,
+      'isDeleted': false, // ✅ Ensure 'isDeleted' is set to a boolean value
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Book added successfully")),
+      const SnackBar(content: Text("Book added successfully")),
     );
 
+    // Clear input fields
     titleController.clear();
     authorController.clear();
     isbnController.clear();
@@ -49,43 +52,43 @@ class _AdminAddBookScreenState extends State<AdminAddBookScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Add a New Book")),
+      appBar: AppBar(title: const Text("Add a New Book")),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Column(
             children: [
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextField(
                 controller: titleController,
-                decoration: InputDecoration(labelText: "Book Title"),
+                decoration: const InputDecoration(labelText: "Book Title"),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextField(
                 controller: authorController,
-                decoration: InputDecoration(labelText: "Author"),
+                decoration: const InputDecoration(labelText: "Author"),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextField(
                 controller: isbnController,
-                decoration: InputDecoration(labelText: "ISBN"),
+                decoration: const InputDecoration(labelText: "ISBN"),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextField(
                 controller: genreController,
-                decoration: InputDecoration(labelText: "Genre"),
+                decoration: const InputDecoration(labelText: "Genre"),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextField(
                 controller: yearController,
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: "Publication Year"),
+                decoration: const InputDecoration(labelText: "Publication Year"),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               DropdownButtonFormField<bool>(
                 value: available,
-                decoration: InputDecoration(labelText: "Availability"),
-                items: [
+                decoration: const InputDecoration(labelText: "Availability"),
+                items: const [
                   DropdownMenuItem(
                     child: Text("Available"),
                     value: true,
@@ -101,14 +104,21 @@ class _AdminAddBookScreenState extends State<AdminAddBookScreen> {
                   });
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _addBook,
-                    child: const Text(
-                          "Add Book",
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: const Text(
+                  "Add Book",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
               ),
-              )
             ],
           ),
         ),
