@@ -1,16 +1,42 @@
-# labproject
+# 🚀 Basic Flutter CRUD
 
-A new Flutter project.
+A simple Flutter CRUD (Create, Read, Update, Delete) application using Firebase as the backend database.
 
-## Getting Started
+## 📌 Features
 
-This project is a starting point for a Flutter application.
+- View a list of items
+- Add new items
+- Edit existing items
+- Delete items
+- Firebase Firestore integration
+  
+## 🏗 Project Setup
 
-A few resources to get you started if this is your first Flutter project:
+### 1️⃣ Prerequisites
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Install Flutter
+- Install Dart
+- Install Firebase CLI
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### 2️⃣ Setup Steps
+
+1. Clone the repository
+
+2. Install dependencies
+   
+3. Configure Firebase
+
+- Create a Firebase project
+- Add Firebase to your Flutter app
+- Download google-services.json and place it in android/app/
+- Enable Firestore Database in Firebase console
+
+4. Run the application
+
+## 🛠 Tech Stack
+
+- Flutter (UI Framework)
+- Dart (Programming Language)
+- Firebase Firestore (Database)
+- Provider (State Management)
+
